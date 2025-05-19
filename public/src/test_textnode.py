@@ -1,6 +1,7 @@
 import unittest
 
 from textnode import TextNode, TextType
+from misc import *
 
 
 class TestTextNode(unittest.TestCase):
@@ -23,6 +24,24 @@ class TestTextNode(unittest.TestCase):
     def test_url(self):
         node = TextNode("sth", TextType.CODE)
         self.assertEqual(node.url, None)
+
+    def test_split(self):
+        node = TextNode("This is text with a `code block` word", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+
+        self.assertEqual(new_nodes, [
+            TextNode("This is text with a ", TextType.TEXT),
+            TextNode("code block", TextType.CODE),
+            TextNode(" word", TextType.TEXT),
+        ])
+
+        nodes = [
+            TextNode("This is text with a `code block` word", TextType.TEXT),
+            TextNode("This is another text with an _itallic block_ word", TextType.TEXT)
+        ]
+
+        new_nodes = split_nodes_delimiter(split_nodes_delimiter(nodes, '`', TextType.CODE), '_', TextType.ITALIC)
+        self.assertEqual(new_nodes, [TextNode("This is text with a ", TextType.TEXT, None), TextNode("code block", TextType.CODE, None), TextNode(" word", TextType.TEXT, None), TextNode("This is another text with an ", TextType.TEXT, None), TextNode("itallic block", TextType.ITALIC, None), TextNode(" word", TextType.TEXT, None)])
 
 if __name__ == "__main__":
     unittest.main()
