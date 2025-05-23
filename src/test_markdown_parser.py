@@ -132,5 +132,15 @@ the **same** even with inline stuff
 
         self.assertEqual(html, "<div><ol><li>Hello this is ordered list</li><li>this one contains <i>italic</i> text</li><li>and this one <code>code</code></li></ol></div>")
 
+    def test_title(self):
+        md = """
+This is the number one
+# super monkey fan club
+that you will ever see!
+"""
+
+        extracrted = extract_title(md)
+        self.assertEqual(extracrted, "super monkey fan club")
+
 if __name__ == "__main__":
     unittest.main()

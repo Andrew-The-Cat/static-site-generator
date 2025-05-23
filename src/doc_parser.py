@@ -150,3 +150,11 @@ def md_to_html(markdown):
 
     
     return ParentNode("div", nodes)
+
+
+def extract_title(md):
+    for line in md.split('\n'):
+        if line.startswith('# '):
+            return line.lstrip('#').strip()
+        
+    raise Exception("No title found")
