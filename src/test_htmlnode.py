@@ -1,7 +1,7 @@
 import unittest
 
 from htmlnode import *
-from misc import *
+from doc_parser import *
 
 
 class TestTextNode(unittest.TestCase):

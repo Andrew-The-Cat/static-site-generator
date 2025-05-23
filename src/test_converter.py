@@ -1,7 +1,7 @@
 import unittest
 
 from textnode import TextNode, TextType
-from misc import *
+from doc_parser import *
 
 
 class TestConverter(unittest.TestCase):
@@ -68,6 +68,23 @@ class TestConverter(unittest.TestCase):
                 [TextNode("hallo", TextType.ITALIC)]
             )
         )
+
+    def test_9000(self):
+        node = text_to_textnodes('This is **text** with an _italic_ word and a `code block` and a [link](https://boot.dev) and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg)')
+        expected = [
+            TextNode("This is ", TextType.TEXT),
+            TextNode("text", TextType.BOLD),
+            TextNode(" with an ", TextType.TEXT),
+            TextNode("italic", TextType.ITALIC),
+            TextNode(" word and a ", TextType.TEXT),
+            TextNode("code block", TextType.CODE),
+            TextNode(" and a ", TextType.TEXT),
+            TextNode("link", TextType.LINK, "https://boot.dev"),
+            TextNode(" and an ", TextType.TEXT),
+            TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+        ]
+
+        self.assertListEqual(node, expected)
 
 if __name__ == "__main__":
     unittest.main()
