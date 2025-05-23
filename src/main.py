@@ -4,10 +4,11 @@ from doc_parser import *
 
 import os
 import shutil
+import sys
 
 def reset():
     src_path = "static"
-    dest_path = "public"
+    dest_path = "docs"
 
     shutil.rmtree(dest_path)
     os.mkdir(dest_path)
@@ -37,7 +38,7 @@ def reset():
 
     recursive(entries, src_path, dest_path)
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
 
     contents = ""
@@ -51,7 +52,7 @@ def generate_page(from_path, template_path, dest_path):
     html = md_to_html(contents).to_html()
     title = extract_title(contents)
 
-    template = template.replace(r"{{ Title }}", title).replace(r"{{ Content }}", html)
+    template = template.replace(r"{{ Title }}", title).replace(r"{{ Content }}", html).replace(r'href="/', f'href="{basepath}').replace(r'src="/', f'src="{basepath}')
 
     aux = dest_path.split('/')
     aux.pop()
@@ -65,7 +66,7 @@ def generate_page(from_path, template_path, dest_path):
     with open(dest_path, 'w') as f:
         f.write(template)
 
-def generate_pages(src_dir_path, template_path, dest_dir_path):
+def generate_pages(src_dir_path, template_path, dest_dir_path, basepath):
     entries = os.listdir(src_dir_path)
 
     def recursive(entries, src_path, dest_path):
@@ -74,7 +75,7 @@ def generate_pages(src_dir_path, template_path, dest_dir_path):
             dest_file = os.path.join(dest_path, entry)
 
             if os.path.isfile(src_file):
-                generate_page(src_file, template_path, dest_file.split('.')[0] + '.html')
+                generate_page(src_file, template_path, dest_file.split('.')[0] + '.html', basepath)
                 continue
 
             n_entries = os.listdir(src_file)
@@ -83,9 +84,13 @@ def generate_pages(src_dir_path, template_path, dest_dir_path):
     recursive(entries, src_dir_path, dest_dir_path)
 
 def main():
+    basepath = '/'
+    if len(sys.argv) > 1:
+        basepath = sys.argv[1]
+
     reset()
     print('')
-    generate_pages("content", "template.html", "public")
+    generate_pages("content", "template.html", "docs", basepath)
     print('')
 
 
